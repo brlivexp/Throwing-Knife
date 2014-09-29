@@ -74,8 +74,8 @@ stock RemovePlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    if(_@has[playerid] == true)
-    	{
+	        if(_@has[playerid] == true)
+    		{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			knife@_counter = 0;
 			_@equiped[playerid]=0;
@@ -90,8 +90,8 @@ stock UnEquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    if(_@has[playerid] == true)
-    	{
+	    	if(_@has[playerid] == true)
+    		{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			_@equiped[playerid]=0;
 		}
@@ -105,8 +105,8 @@ stock EquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    if(_@has[playerid] == true)
-    	{
+	    	if(_@has[playerid] == true)
+    		{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			SetPlayerAttachedObject(playerid, 0, 335, 6, 0.127,-0.017,0.281,-1.50,174.20,-0.50);
 			_@equiped[playerid]=1;
@@ -133,11 +133,11 @@ stock LetPlayerThrowKnife(playerid, clienterror[], errorcolor)
 	{
 		if(_@equiped[playerid] == 1)
 		{
-	    	new codec=knife@_counter[playerid];
+	    		new codec=knife@_counter[playerid];
 			if(knife@_counter[playerid] > 0 && knife@_counter[playerid] <= codec)
 			{
     	
-	    		if(!IsValidDynamicObject(_@TKNF[playerid]))
+	    			if(!IsValidDynamicObject(_@TKNF[playerid]))
 				{
 					ApplyAnimation(playerid, "KNIFE", "KNIFE_1", 4.1, 0, 1, 1, 0, 500, 1);
 					new Float:vecx,Float:vecy,Float:vecz,Float:Angle,Float:vx,Float:vy;
@@ -182,8 +182,8 @@ public OnPlayerConnect(playerid)
 	_@equiped[playerid]=0;
 	
 	#if defined CRF_OnPlayerConnect
-      CRF_OnPlayerConnect(playerid);
-    #endif
+      	CRF_OnPlayerConnect(playerid);
+    	#endif
 	return 1;
 }
 
@@ -200,14 +200,14 @@ public OnPlayerConnect(playerid)
 /* OnPlayerDisconnect */
 public OnPlayerDisconnect(playerid, reason)
 {
-    _@TKNF[playerid]=-1;
+	 _@TKNF[playerid]=-1;
 	knife@_counter[playerid]=0;
 	knife@_movetime[playerid]=-1;
 	_@equiped[playerid]=0;
 
 	#if defined CRF_OnPlayerDisconnect
-      CRF_OnPlayerDisconnect(playerid, reason);
-    #endif
+      	CRF_OnPlayerDisconnect(playerid, reason);
+    	#endif
 	return 1;
 }
 
@@ -231,7 +231,7 @@ public OnPlayerUpdate(playerid)
 	    {
 	        if( i!= playerid)
 	    	{
-				new Float:x,Float:y,Float:z;
+			new Float:x,Float:y,Float:z;
 	    		GetDynamicObjectPos(_@TKNF[playerid],x,y,z);
 	    		if(IsPlayerInRangeOfPoint(i,2.7,x,y,z))
 	    		{
@@ -242,11 +242,11 @@ public OnPlayerUpdate(playerid)
 	        		y=-1;
 	        		z=-1;
 	        		DestroyDynamicObject(_@TKNF[playerid]);
-					_@TKNF[playerid]=-1;
-				}
+				_@TKNF[playerid]=-1;
 			}
 		}
-	}
+	    }
+ 	}
 	
 	if(knife@_counter[playerid] == 0)
 	{
@@ -267,7 +267,7 @@ public OnPlayerUpdate(playerid)
 
 	 #if defined CRF_OnPlayerUpdate
         CRF_OnPlayerUpdate(playerid);
-    #endif
+    	#endif
 		
 	return 1;
 }
