@@ -11,19 +11,20 @@ reduction in the health percentage of the target varies from a range of 0 to 10.
 This is more a script rather than an include. Sorry for bad optimization.
 
 
-NOTE: • This include is still under development and testing.
- 			• The very first throw is a bit buggy.
- 			• Uses PlayerAttachedObject slot '0'
+NOTE: 
+* This include is still under development and testing.
+* The very first throw is a bit buggy.
+* Uses PlayerAttachedObject slot '0'
 
 
 
 Functions
 ===========
-• EquipPlayerThrowingKnife(playerid)
-• UnEquipPlayerThrowingKnife(playerid)
-• RemovePlayerThrowingKnife(playerid)
-• GivePlayerThrowingKnife(playerid,amount)
-• LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
+* EquipPlayerThrowingKnife(playerid)
+* UnEquipPlayerThrowingKnife(playerid)
+* RemovePlayerThrowingKnife(playerid)
+* GivePlayerThrowingKnife(playerid,amount)
+* LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
 
 
 
