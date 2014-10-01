@@ -24,7 +24,11 @@
 
  			   			NOTE: • This include is still under development and testing.
  			   				  • The very first throw is a bit buggy.
- 			   				  • Uses PlayerAttachedObject slot '0'
+ 			   				  • Uses PlayerAttachedObject slot '0'.
+
+ 			   			UPDATE 1: • Added crosshair for accuracy.
+ 			   					  • Improved functions.
+ 			   					  • Added callcack "OnPlayerThrowKnife(playerid)"
 
 
 
@@ -58,7 +62,7 @@ Credits: Incognito - streamer plug-in
 /* The following codes are too much fragile, please "do not edit them". */
 
 /* Defines */
-#define MAX_KNIFE_SPEED		30
+#define MAX_KNIFE_SPEED		27
 
 
 /* Variables/Indentifiers Initialization */
@@ -67,6 +71,7 @@ new knife@_counter[MAX_PLAYERS];
 new knife@_movetime[MAX_PLAYERS];
 new _@equiped[MAX_PLAYERS];
 new bool:_@has[MAX_PLAYERS];
+new PlayerText:crosshair[MAX_PLAYERS];
 
 
 /* Core Function */
@@ -74,8 +79,8 @@ stock RemovePlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	        if(_@has[playerid] == true)
-    		{
+	    if(_@has[playerid] == true)
+    	{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			knife@_counter = 0;
 			_@equiped[playerid]=0;
@@ -86,13 +91,15 @@ stock RemovePlayerThrowingKnife(playerid)
 	else return 0;
 }
 
+
 stock UnEquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    	if(_@has[playerid] == true)
-    		{
+	    if(_@has[playerid] == true)
+    	{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
+			PlayerTextDrawDestroy(playerid, crosshair[playerid]);
 			_@equiped[playerid]=0;
 		}
 		else SendClientMessage(playerid,-1,"SERVER: You don't have throwing knives.");
@@ -101,14 +108,19 @@ stock UnEquipPlayerThrowingKnife(playerid)
 	else return 0;
 }
 
+
 stock EquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    	if(_@has[playerid] == true)
-    		{
+	    if(_@has[playerid] == true)
+    	{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			SetPlayerAttachedObject(playerid, 0, 335, 6, 0.127,-0.017,0.281,-1.50,174.20,-0.50);
+			crosshair[playerid]=CreatePlayerTextDraw(playerid, 320.0-15.0, 240.0-70.0, "(  )");
+			PlayerTextDrawSetShadow(playerid, crosshair[playerid], 0);
+			PlayerTextDrawColor(playerid,crosshair[playerid], 0xFFFFFFFF);
+		 	PlayerTextDrawShow(playerid, crosshair[playerid]);
 			_@equiped[playerid]=1;
 		}
 		else SendClientMessage(playerid,-1,"SERVER: You don't have throwing knives.");
@@ -127,27 +139,31 @@ stock GivePlayerThrowingKnife(playerid,amount)
 	}
 	else return 0;
 }
+
+
 stock LetPlayerThrowKnife(playerid, clienterror[], errorcolor)
 {
 	if(_@has[playerid] == true)
 	{
 		if(_@equiped[playerid] == 1)
 		{
-	    		new codec=knife@_counter[playerid];
-			if(knife@_counter[playerid] > 0 && knife@_counter[playerid] <= codec)
+			if(knife@_counter[playerid] > 0)
 			{
-    	
-	    			if(!IsValidDynamicObject(_@TKNF[playerid]))
+
+	    		if(!IsValidDynamicObject(_@TKNF[playerid]))
 				{
-					ApplyAnimation(playerid, "KNIFE", "KNIFE_1", 4.1, 0, 1, 1, 0, 500, 1);
+					ApplyAnimation(playerid, "GRENADE", "WEAPON_THROW", 3.5, 0, 1, 1, 0, 500, 1);
 					new Float:vecx,Float:vecy,Float:vecz,Float:Angle,Float:vx,Float:vy;
-					GetPlayerFacingAngle(playerid,Angle);
 					GetPlayerPos(playerid, vecx, vecy, vecz);
-					vx=vecx+floatsin(-(Angle+360.0),degrees)*50;
-					vy=vecy+floatcos(-(Angle+360.0),degrees)*50;
-					_@TKNF[playerid]=CreateDynamicObject(335, vecx,vecy,vecz+0.6,-1.5+180.0, 270.0, Angle+270,GetPlayerVirtualWorld(playerid),GetPlayerInterior(playerid),-1,700.0,1000.0);
-					knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz+0.6,MAX_KNIFE_SPEED,-1.5+180.0, 270.0, Angle+270.0);
-					SetTimerEx("destroy@_knives",knife@_movetime[playerid]-100,0,"i",playerid);
+					GetPlayerFacingAngle(playerid,Angle);
+					vx=vecx+floatsin(-(Angle+360.0),degrees)*60;
+					vy=vecy+floatcos(-(Angle+360.0),degrees)*60;
+					_@TKNF[playerid]=CreateDynamicObject(335, vecx,vecy,vecz+0.7,-1.5+180.0, 270.0, Angle+270,GetPlayerVirtualWorld(playerid),GetPlayerInterior(playerid),-1,700.0,1000.0);
+					knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz+0.7,MAX_KNIFE_SPEED,-1.5+180.0,270.0, Angle+270);
+					SetTimerEx("destroy@_knives",knife@_movetime[playerid]-90,0,"i",playerid);
+					#if defined OnPlayerThrowKnife
+					OnPlayerThrowKnife(playerid);
+					#endif
 					knife@_counter[playerid]-=1;
 				}
 				else SendClientMessage(playerid,errorcolor, clienterror);
@@ -182,8 +198,8 @@ public OnPlayerConnect(playerid)
 	_@equiped[playerid]=0;
 	
 	#if defined CRF_OnPlayerConnect
-      	CRF_OnPlayerConnect(playerid);
-    	#endif
+      CRF_OnPlayerConnect(playerid);
+    #endif
 	return 1;
 }
 
@@ -200,14 +216,14 @@ public OnPlayerConnect(playerid)
 /* OnPlayerDisconnect */
 public OnPlayerDisconnect(playerid, reason)
 {
-	 _@TKNF[playerid]=-1;
+    _@TKNF[playerid]=-1;
 	knife@_counter[playerid]=0;
 	knife@_movetime[playerid]=-1;
 	_@equiped[playerid]=0;
 
 	#if defined CRF_OnPlayerDisconnect
-      	CRF_OnPlayerDisconnect(playerid, reason);
-    	#endif
+      CRF_OnPlayerDisconnect(playerid, reason);
+    #endif
 	return 1;
 }
 
@@ -231,30 +247,30 @@ public OnPlayerUpdate(playerid)
 	    {
 	        if( i!= playerid)
 	    	{
-			new Float:x,Float:y,Float:z;
+				new Float:x,Float:y,Float:z;
 	    		GetDynamicObjectPos(_@TKNF[playerid],x,y,z);
-	    		if(IsPlayerInRangeOfPoint(i,2.7,x,y,z))
+	    		if(IsPlayerInRangeOfPoint(i,2.7,x,y,0.0))
 	    		{
 	        		new Float:health;
 	        		GetPlayerHealth(i,health);
-	        		SetPlayerHealth(i,health-random(11));
+	        		SetPlayerHealth(i,health-random(20));
 	        		x=-1;
 	        		y=-1;
 	        		z=-1;
 	        		DestroyDynamicObject(_@TKNF[playerid]);
-				_@TKNF[playerid]=-1;
+					_@TKNF[playerid]=-1;
+				}
 			}
 		}
-	    }
- 	}
-	
+	}
+
 	if(knife@_counter[playerid] == 0)
 	{
 		RemovePlayerAttachedObject(playerid, 0);
 		knife@_movetime[playerid] = -1;
 		_@equiped[playerid] = 0;
 	}
-	
+
 	if(knife@_counter[playerid] > 0)
 	{
 	    _@has[playerid] = true;
@@ -263,11 +279,12 @@ public OnPlayerUpdate(playerid)
 	{
 		_@has[playerid] = false;
 		_@equiped[playerid] = 0;
+		PlayerTextDrawDestroy(playerid, crosshair[playerid]);
 	}
 
 	 #if defined CRF_OnPlayerUpdate
         CRF_OnPlayerUpdate(playerid);
-    	#endif
+    #endif
 		
 	return 1;
 }
@@ -280,6 +297,11 @@ public OnPlayerUpdate(playerid)
 #define OnPlayerUpdate CRF_OnPlayerUpdate
 #if defined CRF_OnPlayerUpdate
     forward CRF_OnPlayerUpdate(playerid);
+#endif
+
+/* Callback */
+#if defined OnPlayerThrowKnife
+forward OnPlayerThrowKnife(playerid);
 #endif
 
 
