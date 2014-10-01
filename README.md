@@ -7,16 +7,20 @@ Introduction
 [ALPHA]
 This include let you to create some deadly throwing knives for each player, these knives
 can reduce target's health percentage whenever the target gets hit by these knives. The
-reduction in the health percentage of the target varies from a range of 0 to 10.
+reduction in the health percentage of the target varies from a range of 0 to 20.
 This is more a script rather than an include. Sorry for bad optimization.
 
 
 NOTE: 
 * This include is still under development and testing.
-* The very first throw is a bit buggy.
 * Uses PlayerAttachedObject slot '0'
 
-
+UPDATE 1
+----------
+* Added crosshair for accuracy.
+* Damage range now varies from 0-20.
+* Improved functions.
+* Added callback "OnPlayerThrowKnife(playerid)"
 
 Functions
 ===========
