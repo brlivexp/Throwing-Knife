@@ -23,20 +23,20 @@
 
 
  			   			NOTE: • This include is still under development and testing.
- 			   				  • The very first throw is a bit buggy.
- 			   				  • Uses PlayerAttachedObject slot '0'.
+ 			   			      • The very first throw is a bit buggy.
+ 			   			      • Uses PlayerAttachedObject slot '0'.
 
  			   			UPDATE 1: • Added crosshair for accuracy.
- 			   					  • Improved functions.
- 			   					  • Added callcack "OnPlayerThrowKnife(playerid)"
+ 			   				  • Improved functions.
+ 			   				  • Added callback "OnPlayerThrowKnife(playerid)"
 
 
 
-Functions: 				• EquipPlayerThrowingKnife(playerid)
-						• UnEquipPlayerThrowingKnife(playerid)
-						• RemovePlayerThrowingKnife(playerid)
-						• GivePlayerThrowingKnife(playerid,amount)
-						• LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
+Functions: 	• EquipPlayerThrowingKnife(playerid)
+		• UnEquipPlayerThrowingKnife(playerid)
+		• RemovePlayerThrowingKnife(playerid)
+		• GivePlayerThrowingKnife(playerid,amount)
+		• LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
 
 
 
@@ -96,8 +96,8 @@ stock UnEquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    if(_@has[playerid] == true)
-    	{
+	        if(_@has[playerid] == true)
+    		{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			PlayerTextDrawDestroy(playerid, crosshair[playerid]);
 			_@equiped[playerid]=0;
@@ -113,8 +113,8 @@ stock EquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    if(_@has[playerid] == true)
-    	{
+	        if(_@has[playerid] == true)
+    		{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			SetPlayerAttachedObject(playerid, 0, 335, 6, 0.127,-0.017,0.281,-1.50,174.20,-0.50);
 			crosshair[playerid]=CreatePlayerTextDraw(playerid, 320.0-15.0, 240.0-70.0, "(  )");
@@ -150,7 +150,7 @@ stock LetPlayerThrowKnife(playerid, clienterror[], errorcolor)
 			if(knife@_counter[playerid] > 0)
 			{
 
-	    		if(!IsValidDynamicObject(_@TKNF[playerid]))
+	    			if(!IsValidDynamicObject(_@TKNF[playerid]))
 				{
 					ApplyAnimation(playerid, "GRENADE", "WEAPON_THROW", 3.5, 0, 1, 1, 0, 500, 1);
 					new Float:vecx,Float:vecy,Float:vecz,Float:Angle,Float:vx,Float:vy;
@@ -247,9 +247,9 @@ public OnPlayerUpdate(playerid)
 	    {
 	        if( i!= playerid)
 	    	{
-				new Float:x,Float:y,Float:z;
+			new Float:x,Float:y,Float:z;
 	    		GetDynamicObjectPos(_@TKNF[playerid],x,y,z);
-	    		if(IsPlayerInRangeOfPoint(i,2.7,x,y,0.0))
+	    		if(IsPlayerInRangeOfPoint(i,2.7,x,y,z-0.7))
 	    		{
 	        		new Float:health;
 	        		GetPlayerHealth(i,health);
@@ -258,10 +258,10 @@ public OnPlayerUpdate(playerid)
 	        		y=-1;
 	        		z=-1;
 	        		DestroyDynamicObject(_@TKNF[playerid]);
-					_@TKNF[playerid]=-1;
-				}
+				_@TKNF[playerid]=-1;
 			}
 		}
+	    }
 	}
 
 	if(knife@_counter[playerid] == 0)
