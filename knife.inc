@@ -23,11 +23,15 @@
 
 
  			   			NOTE: • This include is still under development and testing.
- 			   				  • Uses PlayerAttachedObject slot '0'.
+ 			   			      • Uses PlayerAttachedObject slot '0'.
+ 			   			      
+ 			   			UPDATE 2: • Improved code.
+ 			   				  	  • Improved crosshair.
+ 			   			 	      • Improved Damage status (0 -100)
 
  			   			UPDATE 1: • Added crosshair for accuracy.
- 			   					  • Improved functions.
- 			   					  • Added callback "OnPlayerThrowKnife(playerid)"
+ 			   				  	  • Improved functions.
+ 			   				  	  • Added callback "OnPlayerThrowKnife(playerid)"
 
 
 
