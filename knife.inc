@@ -26,20 +26,20 @@
  			   			      • Uses PlayerAttachedObject slot '0'.
  			   			      
  			   			UPDATE 2: • Improved code.
- 			   				  	  • Improved crosshair.
- 			   			 	      • Improved Damage status (0 -100)
+ 			   				  • Improved crosshair.
+ 			   			 	  • Improved Damage status (0 -100)
 
  			   			UPDATE 1: • Added crosshair for accuracy.
- 			   				  	  • Improved functions.
- 			   				  	  • Added callback "OnPlayerThrowKnife(playerid)"
+ 			   				  • Improved functions.
+ 			   				  • Added callback "OnPlayerThrowKnife(playerid)"
 
 
 
 Functions: 				• EquipPlayerThrowingKnife(playerid)
-						• UnEquipPlayerThrowingKnife(playerid)
-						• RemovePlayerThrowingKnife(playerid)
-						• GivePlayerThrowingKnife(playerid,amount)
-						• LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
+					• UnEquipPlayerThrowingKnife(playerid)
+					• RemovePlayerThrowingKnife(playerid)
+					• GivePlayerThrowingKnife(playerid,amount)
+					• LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
 
 
 
