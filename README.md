@@ -15,20 +15,14 @@ NOTE:
 * This include is still under development and testing.
 * Uses PlayerAttachedObject slot '0'
 
-UPDATE 1
-----------
-* Added crosshair for accuracy.
-* Damage range now varies from 0-20.
-* Improved functions.
-* Added callback "OnPlayerThrowKnife(playerid)"
 
 Functions
 ===========
-* EquipPlayerThrowingKnife(playerid)
+* EquipPlayerThrowingKnife(playerid,color)
 * UnEquipPlayerThrowingKnife(playerid)
 * RemovePlayerThrowingKnife(playerid)
 * GivePlayerThrowingKnife(playerid,amount)
-* LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
+* LetPlayerThrowKnife(playerid, Float:distance, clienterror[], errorcolor)	
 
 
 
