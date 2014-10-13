@@ -18,28 +18,19 @@
 *****************************************************************************************************************
  Introduction [PRE-RELEASE]	: This include let you to create some deadly throwing knives for each player, these knives
  			   			can reduce target's health percentage whenever the target gets hit by these knives. The
- 			   			reduction in the health percentage of the target varies from a range of 0 to 10.
+ 			   			reduction in the health percentage of the target varies from a range of 0 to 100.
  			   			This is more a script rather than an include. Sorry for bad optimization.
 
 
  			   			NOTE: • This include is still under development and testing.
- 			   			      • Uses PlayerAttachedObject slot '0'.
- 			   			      
- 			   			UPDATE 2: • Improved code.
- 			   				  • Improved crosshair.
- 			   			 	  • Improved Damage status (0 -100)
-
- 			   			UPDATE 1: • Added crosshair for accuracy.
- 			   				  • Improved functions.
- 			   				  • Added callback "OnPlayerThrowKnife(playerid)"
+ 			   				  • Uses PlayerAttachedObject slot '0'.
 
 
-
-Functions: 				• EquipPlayerThrowingKnife(playerid)
+Functions: 			• EquipPlayerThrowingKnife(playerid,color)
 					• UnEquipPlayerThrowingKnife(playerid)
 					• RemovePlayerThrowingKnife(playerid)
 					• GivePlayerThrowingKnife(playerid,amount)
-					• LetPlayerThrowKnife(playerid, clienterror[], errorcolor)	
+					• LetPlayerThrowKnife(playerid,Float:distance, clienterror[], errorcolor)	
 
 
 
@@ -65,8 +56,7 @@ Credits: Incognito - streamer plug-in
 /* The following codes are too much fragile, please "do not edit them". */
 
 /* Defines */
-#define KNIFE_FINAL_VELOCITY		30
-#define KNIFE_INITIAL_VELOCITY		20
+#define MAX_KNIFE_SPEED		25
 
 
 /* Variables/Indentifiers Initialization */
@@ -83,8 +73,8 @@ stock RemovePlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    	if(_@has[playerid] == true)
-    		{
+	    if(_@has[playerid] == true)
+    	{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			knife@_counter = 0;
 			_@equiped[playerid]=0;
@@ -100,8 +90,8 @@ stock UnEquipPlayerThrowingKnife(playerid)
 {
 	if(IsPlayerConnected(playerid))
 	{
-	    	if(_@has[playerid] == true)
-    		{
+	    if(_@has[playerid] == true)
+    	{
 			if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 			PlayerTextDrawDestroy(playerid, crosshair[playerid]);
 			_@equiped[playerid]=0;
@@ -113,19 +103,19 @@ stock UnEquipPlayerThrowingKnife(playerid)
 }
 
 
-stock EquipPlayerThrowingKnife(playerid)
+stock EquipPlayerThrowingKnife(playerid,color=-1)
 {
 	if(IsPlayerConnected(playerid))
 	{
 	    if(_@equiped[playerid] == 0)
 	    {
-	    		if(_@has[playerid] == true)
-    			{
+	    	if(_@has[playerid] == true)
+    		{
 				if(IsPlayerAttachedObjectSlotUsed(playerid, 0)) RemovePlayerAttachedObject(playerid, 0);
 				SetPlayerAttachedObject(playerid, 0, 335, 6, 0.127,-0.017,0.281,-1.50,174.20,-0.50);
-				crosshair[playerid]=CreatePlayerTextDraw(playerid, 320.0-15.0, 240.0-70.0, "(  )");
+				crosshair[playerid]=CreatePlayerTextDraw(playerid, 320.0-15.0, 240.0-62.0, "(  )");
 				PlayerTextDrawSetShadow(playerid, crosshair[playerid], 0);
-				PlayerTextDrawColor(playerid,crosshair[playerid], 0xFFFFFFFF);
+				PlayerTextDrawColor(playerid,crosshair[playerid], color);
 				PlayerTextDrawFont(playerid, crosshair[playerid], 1);
 		 		PlayerTextDrawShow(playerid, crosshair[playerid]);
 				_@equiped[playerid]=1;
@@ -150,7 +140,7 @@ stock GivePlayerThrowingKnife(playerid,amount)
 }
 
 
-stock LetPlayerThrowKnife(playerid, clienterror[], errorcolor)
+stock LetPlayerThrowKnife(playerid,Float:distance, clienterror[], errorcolor)
 {
 	if(_@has[playerid] == true)
 	{
@@ -165,11 +155,11 @@ stock LetPlayerThrowKnife(playerid, clienterror[], errorcolor)
 					new Float:vecx,Float:vecy,Float:vecz,Float:Angle,Float:vx,Float:vy;
 					GetPlayerPos(playerid, vecx, vecy, vecz);
 					GetPlayerFacingAngle(playerid,Angle);
-					vx=vecx+floatsin(-(Angle+360.0),degrees)*30;
-					vy=vecy+floatcos(-(Angle+360.0),degrees)*30;
+					vx=vecx+floatsin(-(Angle+360.0),degrees)*(distance/6);
+					vy=vecy+floatcos(-(Angle+360.0),degrees)*(distance/6);
 					_@TKNF[playerid]=CreateDynamicObject(335, vecx,vecy,vecz+0.7,-1.5+180.0, 270.0, Angle+270,GetPlayerVirtualWorld(playerid),GetPlayerInterior(playerid),-1,700.0,1000.0);
-					knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz+0.7,KNIFE_INITIAL_VELOCITY,-1.5+180.0,270.0-360.0, Angle+270);
-					SetTimerEx("knife@_track",knife@_movetime[playerid]-90,0,"if",playerid,Angle);
+					knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz+0.7,MAX_KNIFE_SPEED,-1.5+180.0,270.0-360.0, Angle+270.0);
+					SetTimerEx("knife@_track1",knife@_movetime[playerid],0,"iff",playerid,distance,Angle);
 					#if defined OnPlayerThrowKnife
 					OnPlayerThrowKnife(playerid);
 					#endif
@@ -184,8 +174,8 @@ stock LetPlayerThrowKnife(playerid, clienterror[], errorcolor)
 	return 1;
 }
 
-forward knife@_track(playerid,Float:Angle);
-public knife@_track(playerid,Float:Angle)
+forward knife@_track1(playerid,Float:distance,Float:Angle);
+public knife@_track1(playerid,Float:distance,Float:Angle)
 {
 	StopDynamicObject(_@TKNF[playerid]);
 	new Float:vecx,Float:vecy,Float:vecz;
@@ -193,9 +183,73 @@ public knife@_track(playerid,Float:Angle)
 	GetDynamicObjectRot(_@TKNF[playerid], rx, ry,rz);
 	GetDynamicObjectPos(_@TKNF[playerid], vecx, vecy,vecz);
 	new Float:vx,Float:vy;
-	vx=vecx+floatsin(-(Angle+360.0),degrees)*50;
-	vy=vecy+floatcos(-(Angle+360.0),degrees)*50;
-	knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz,KNIFE_FINAL_VELOCITY,rx,ry,rz);
+	vx=vecx+floatsin(-(Angle+360.0),degrees)*(distance/6);
+	vy=vecy+floatcos(-(Angle+360.0),degrees)*(distance/6);
+	knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz,MAX_KNIFE_SPEED,rx,(ry+180.0), rz);
+	SetTimerEx("knife@_track2",knife@_movetime[playerid],0,"iff",playerid,distance,Angle);
+	return 1;
+}
+
+forward knife@_track2(playerid,Float:distance,Float:Angle);
+public knife@_track2(playerid,Float:distance,Float:Angle)
+{
+	StopDynamicObject(_@TKNF[playerid]);
+	new Float:vecx,Float:vecy,Float:vecz;
+	new Float:rx,Float:ry,Float:rz;
+	GetDynamicObjectRot(_@TKNF[playerid], rx, ry,rz);
+	GetDynamicObjectPos(_@TKNF[playerid], vecx, vecy,vecz);
+	new Float:vx,Float:vy;
+	vx=vecx+floatsin(-(Angle+360.0),degrees)*(distance/6);
+	vy=vecy+floatcos(-(Angle+360.0),degrees)*(distance/6);
+	knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz,MAX_KNIFE_SPEED,rx,(ry+180.0), rz);
+	SetTimerEx("knife@_track3",knife@_movetime[playerid],0,"iff",playerid,distance,Angle);
+	return 1;
+}
+
+forward knife@_track3(playerid,Float:distance,Float:Angle);
+public knife@_track3(playerid,Float:distance,Float:Angle)
+{
+	StopDynamicObject(_@TKNF[playerid]);
+	new Float:vecx,Float:vecy,Float:vecz;
+	new Float:rx,Float:ry,Float:rz;
+	GetDynamicObjectRot(_@TKNF[playerid], rx, ry,rz);
+	GetDynamicObjectPos(_@TKNF[playerid], vecx, vecy,vecz);
+	new Float:vx,Float:vy;
+	vx=vecx+floatsin(-(Angle+360.0),degrees)*(distance/6);
+	vy=vecy+floatcos(-(Angle+360.0),degrees)*(distance/6);
+	knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz,MAX_KNIFE_SPEED,rx,(ry+180.0), rz);
+	SetTimerEx("knife@_track4",knife@_movetime[playerid],0,"iff",playerid,distance,Angle);
+	return 1;
+}
+
+forward knife@_track4(playerid,Float:distance,Float:Angle);
+public knife@_track4(playerid,Float:distance,Float:Angle)
+{
+	StopDynamicObject(_@TKNF[playerid]);
+	new Float:vecx,Float:vecy,Float:vecz;
+	new Float:rx,Float:ry,Float:rz;
+	GetDynamicObjectRot(_@TKNF[playerid], rx, ry,rz);
+	GetDynamicObjectPos(_@TKNF[playerid], vecx, vecy,vecz);
+	new Float:vx,Float:vy;
+	vx=vecx+floatsin(-(Angle+360.0),degrees)*(distance/6);
+	vy=vecy+floatcos(-(Angle+360.0),degrees)*(distance/6);
+	knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz,MAX_KNIFE_SPEED,rx,(ry+180.0), rz);
+	SetTimerEx("knife@_track5",knife@_movetime[playerid],0,"iff",playerid,distance,Angle);
+	return 1;
+}
+
+forward knife@_track5(playerid,Float:distance,Float:Angle);
+public knife@_track5(playerid,Float:distance,Float:Angle)
+{
+	StopDynamicObject(_@TKNF[playerid]);
+	new Float:vecx,Float:vecy,Float:vecz;
+	new Float:rx,Float:ry,Float:rz;
+	GetDynamicObjectRot(_@TKNF[playerid], rx, ry,rz);
+	GetDynamicObjectPos(_@TKNF[playerid], vecx, vecy,vecz);
+	new Float:vx,Float:vy;
+	vx=vecx+floatsin(-(Angle+360.0),degrees)*(distance/6);
+	vy=vecy+floatcos(-(Angle+360.0),degrees)*(distance/6);
+	knife@_movetime[playerid]=MoveDynamicObject(_@TKNF[playerid],vx,vy,vecz,MAX_KNIFE_SPEED,rx,(ry+180.0), rz);
 	SetTimerEx("destroy@_knives",knife@_movetime[playerid]-90,0,"i",playerid);
 	return 1;
 }
@@ -242,7 +296,7 @@ public OnPlayerConnect(playerid)
 /* OnPlayerDisconnect */
 public OnPlayerDisconnect(playerid, reason)
 {
-    _@TKNF[playerid]=-1;
+    	_@TKNF[playerid]=-1;
 	knife@_counter[playerid]=0;
 	knife@_movetime[playerid]=-1;
 	_@equiped[playerid]=0;
@@ -292,8 +346,8 @@ public OnPlayerUpdate(playerid)
 	{
 	    for(new i=0;i<MAX_PLAYERS;i++)
 	    {
-	        if( i!= playerid)
-	    	{
+			if(i != playerid)
+			{
 			new Float:x,Float:y,Float:z;
 	    		GetDynamicObjectPos(_@TKNF[playerid],x,y,z);
 	    		if(IsPlayerInRangeOfPoint(i,3.2,x,y,z))
@@ -305,7 +359,9 @@ public OnPlayerUpdate(playerid)
 	        		y=-1;
 	        		z=-1;
 	        		DestroyDynamicObject(_@TKNF[playerid]);
-					_@TKNF[playerid]=-1;
+				_@TKNF[playerid]=-1;
+				ApplyAnimation(playerid, "KNIFE", "knife_hit_2", 4.1, 0, 1, 1, 0, 200, 1);
+				break;
 				}
 			}
 		}
